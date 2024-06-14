@@ -1,4 +1,4 @@
-package basic;
+package basic.examples;
 
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;

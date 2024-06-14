@@ -1,4 +1,4 @@
-package basic;
+package basic.examples;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
