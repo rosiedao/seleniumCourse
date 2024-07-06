@@ -1,8 +1,10 @@
 package basic.examples;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -16,24 +18,26 @@ import java.util.List;
 import java.util.Set;
 
 public class HandleActions {
-    public String driverPath = "/Users/dungdao/Documents/Setup/chromedriver/chromedriver";
     public WebDriver driver;
     @BeforeClass
     public void startBrowser() {
-        System.setProperty("webdriver.chrome.driver", driverPath);
-        driver = new ChromeDriver();
+        WebDriverManager.chromedriver().setup();
+        ChromeOptions option = new ChromeOptions();
+        option.addArguments("--disable-notifications");
+        driver = new ChromeDriver(option);
         driver.manage().window().maximize();
-        driver.get("https://www.lifehack.org/");
-        driver.manage().timeouts().implicitlyWait(Duration.ofMillis(3000));
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
     }
     @Test
     public void takeScreenShot() throws IOException {
+        driver.get("https://www.lifehack.org/");
         File src = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
         FileUtils.copyFile(src,new File("output/handleaction.png"));
     }
 
     @Test
     public void mouseOverElement() {
+        driver.get("https://www.lifehack.org/");
         Actions a = new Actions(driver);
         //Move to a specific element
         a.moveToElement(driver.findElement(By.linkText("Start Here"))).build().perform();
@@ -45,6 +49,7 @@ public class HandleActions {
 
     @Test
     public void litmitLinkNumber() {
+        driver.get("https://www.lifehack.org/");
         WebElement firstMenus = driver.findElement(By.xpath("//ul[@id='menu-main-nav-rebrand']//li[1]/ul[@class='sub-menu']"));
         List<WebElement> links = firstMenus.findElements(By.tagName("a"));
         int noOfLinkOnFirstMenu = links.size();
@@ -73,9 +78,10 @@ public class HandleActions {
     }
     @Test
     public void openLinkInNewTab(){
+        driver.get("https://www.lifehack.org/");
         Actions actions = new Actions(driver);
         String clickOnLinkTab = Keys.chord(Keys.CONTROL, Keys.ENTER);
-        WebElement link = driver.findElement(By.xpath("//strong[contains(text(),'Take the Fast Track')]"));
+        WebElement link = driver.findElement(By.xpath("//strong[contains(text(),'Get Started Today')]"));
         //Using Keys.CONTROL for window and Keys.COMMAND for MAC
         actions.keyDown(Keys.COMMAND).click(link).keyUp(Keys.COMMAND).build().perform();
         //driver.findElement(By.xpath("//strong[contains(text(),'Take the Fast Track')]")).sendKeys(clickOnLinkTab);

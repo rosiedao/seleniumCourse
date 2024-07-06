@@ -1,18 +1,17 @@
 package common;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.*;
 
 import javax.xml.stream.events.Characters;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Random;
+import java.util.Set;
+import java.util.function.Function;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
@@ -29,6 +28,16 @@ public class Commons {
     public void waitForElementToDisappear(By findBy, int duration){
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(duration));
         wait.until(ExpectedConditions.invisibilityOfElementLocated(findBy));
+    }
+    public void fluentWaitElementFound(By locator){
+        FluentWait<WebDriver> fluentWait = new FluentWait<>(driver);
+        fluentWait.withTimeout(Duration.ofSeconds(10)).pollingEvery(Duration.ofMillis(300)).ignoring(NoSuchElementException.class);
+        fluentWait.until(new Function<WebDriver, WebElement>() {
+            @Override
+            public WebElement apply(WebDriver webDriver) {
+                return webDriver.findElement(locator);
+            }
+        });
     }
     public void verifyCurrentURLOfPage(String expectedURL){
         assertEquals(driver.getCurrentUrl(),expectedURL);
@@ -89,4 +98,57 @@ public class Commons {
         List<WebElement> options = objSelect.getOptions();
         return options.size();
     }
+    public void verifyInputtedValue(WebElement e, String value){
+        assertEquals(e.getAttribute("value"),value);
+    }
+    public void verifySelectedValue(WebElement e, String value){
+        Select select = new Select(e);
+        assertEquals(select.getFirstSelectedOption().getText(),value);
+    }
+    public void openLinkInNewTab(WebElement link){
+        String selectLinkOpenInNewTab = Keys.chord(Keys.COMMAND,Keys.RETURN);
+        link.sendKeys(selectLinkOpenInNewTab);
+    }
+    public void openNewTab(){
+        JavascriptExecutor js = (JavascriptExecutor)driver;
+        js.executeScript("window.open()");
+        ArrayList<String> tabs = new ArrayList<>(driver.getWindowHandles());
+        driver.switchTo().window(tabs.get(1));
+    }
+    public void switchToWindowByTitle(String expectedTitle){
+        Set<String> windows = driver.getWindowHandles();
+        for (String window : windows) {
+            driver.switchTo().window(window);
+            if (driver.getTitle().equals(expectedTitle)) {
+                break;
+            }
+        }
+    }
+    public void sleep(long second){
+        try {
+            Thread.sleep(second * 1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean isPageLoadedSuccess() {
+        WebDriverWait explicitWait = new WebDriverWait(driver, Duration.ofSeconds(30));
+        JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
+        ExpectedCondition<Boolean> jQueryLoad = new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver driver) {
+                return (Boolean) jsExecutor.executeScript("return (window.jQuery != null) && (jQuery.active === 0);");
+            }
+        };
+
+        ExpectedCondition<Boolean> jsLoad = new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver driver) {
+                return jsExecutor.executeScript("return document.readyState").toString().equals("complete");
+            }
+        };
+        return explicitWait.until(jQueryLoad) && explicitWait.until(jsLoad);
+    }
+
 }

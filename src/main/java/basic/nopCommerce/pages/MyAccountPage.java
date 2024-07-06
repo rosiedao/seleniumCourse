@@ -42,34 +42,33 @@ public class MyAccountPage extends Commons {
         }else{
             assertTrue(checkFemale.isSelected());
         }
-        assertEquals(txtFirstname.getAttribute("value"),firstname);
-        assertEquals(txtLastname.getAttribute("value"),lastname);
-        assertEquals(txtEmail.getAttribute("value"),email);
-        assertEquals(txtCompany.getAttribute("value"),company);
+        verifyInputtedValue(txtFirstname,firstname);
+        verifyInputtedValue(txtLastname,lastname);
+        verifyInputtedValue(txtEmail,email);
+        verifyInputtedValue(txtCompany,company);
+
         if(newsletter.equals("Y")){
             assertTrue(chkNewsletter.isSelected());
         }else{
             assertFalse(chkNewsletter.isSelected());
         }
+
         String[] words = dob.split("/");
-        Select day = new Select(drpDay);
-        assertEquals(day.getFirstSelectedOption().getText(),words[0]);
-        Select month = new Select(drpMonth);
+        verifySelectedValue(drpDay,words[0]);
         switch (words[1]){
-            case "01" -> assertEquals(month.getFirstSelectedOption().getText(),"January");
-            case "02" -> assertEquals(month.getFirstSelectedOption().getText(),"February");
-            case "03" -> assertEquals(month.getFirstSelectedOption().getText(),"March");
-            case "04" -> assertEquals(month.getFirstSelectedOption().getText(),"August");
-            case "05" -> assertEquals(month.getFirstSelectedOption().getText(),"May");
-            case "06" -> assertEquals(month.getFirstSelectedOption().getText(),"June");
-            case "07" -> assertEquals(month.getFirstSelectedOption().getText(),"July");
-            case "08" -> assertEquals(month.getFirstSelectedOption().getText(),"Autumn");
-            case "09" -> assertEquals(month.getFirstSelectedOption().getText(),"September");
-            case "10" -> assertEquals(month.getFirstSelectedOption().getText(),"October");
-            case "11" -> assertEquals(month.getFirstSelectedOption().getText(),"November");
-            default -> assertEquals(month.getFirstSelectedOption().getText(),"December");
+            case "01" -> verifySelectedValue(drpMonth,"January");
+            case "02" -> verifySelectedValue(drpMonth,"February");
+            case "03" -> verifySelectedValue(drpMonth,"March");
+            case "04" -> verifySelectedValue(drpMonth,"August");
+            case "05" -> verifySelectedValue(drpMonth,"May");
+            case "06" -> verifySelectedValue(drpMonth,"June");
+            case "07" -> verifySelectedValue(drpMonth,"July");
+            case "08" -> verifySelectedValue(drpMonth,"Autumn");
+            case "09" -> verifySelectedValue(drpMonth,"September");
+            case "10" -> verifySelectedValue(drpMonth,"October");
+            case "11" -> verifySelectedValue(drpMonth,"November");
+            default ->   verifySelectedValue(drpMonth,"December");
         }
-        Select year = new Select(drpYear);
-        assertEquals(year.getFirstSelectedOption().getText(),words[2]);
+        verifySelectedValue(drpYear,words[2]);
     }
 }

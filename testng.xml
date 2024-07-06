@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="All Test Suite">
+    <listeners>
+        <listener class-name="testNG.Listeners"/>
+
+    </listeners>
+    <test verbose="2" preserve-order="true" name="/Users/dungdao/Documents/Project/seleniumCourse">
+        <parameter name="urlName" value="Google"/>
+        <parameter name="key" value="5"/>
+        <classes>
+            <class name="testNG.DataProvider">
+                <methods>
+                    <include name="printData"/>
+                    <include name="UsingParameters"/>
+                </methods>
+            </class>
+
+        </classes>
+    </test>
+</suite>
